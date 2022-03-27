@@ -25,6 +25,8 @@ rightWristX = "";
 rightWristY = "";
 rightWristScore = "";
 
+game_status = "";
+
 function setup(){
   var canvas =  createCanvas(700,600);
   canvas.parent("canvas");
@@ -52,7 +54,15 @@ function gotPoses(results)
       rightWristScore = results[0].pose.rightWrist.score;
 	}
 }
+
+function startGame()
+{
+  game_status = "start";
+  document.getElementById("status").innerHTML = "The Game . . . BEGINS!";
+}
 function draw(){
+  if(game_status == "start")
+  {
   if(rightWristScore > 0.2)
   {
     fill("crimson");
@@ -96,6 +106,7 @@ function draw(){
    
    //function move call which in very important
     move();
+  }
 }
 
 
@@ -125,10 +136,11 @@ function midline(){
 function drawScore(){
     textAlign(CENTER);
     textSize(20);
-    fill("white");
+    fill("red");
     stroke(250,0,0)
     text("Player:",100,50)
     text(playerscore,140,50);
+    fill("blue");
     text("Computer:",500,50)
     text(pcscore,555,50)
 }
@@ -176,11 +188,11 @@ if(pcscore ==4){
 //width height of canvas speed of ball 
 function models(){
     textSize(18);
-    fill(255);
+    fill("cyan");
     noStroke();
-    text("Width:"+width,135,15);
-    text("Speed:"+abs(ball.dx),50,15);
-    text("Height:"+height,235,15)
+    text("Width:"+width,335,15);
+    text("Speed:"+abs(ball.dx),250,15);
+    text("Height:"+height,435,15)
 }
 
 
