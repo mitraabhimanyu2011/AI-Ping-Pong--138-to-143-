@@ -21,12 +21,17 @@ var ball = {
     dy:3
 }
 
-rightWristX = "";
-rightWristY = "";
-rightWristScore = "";
+noseX = "";
+noseY = "";
+noseScore = "";
 
 game_status = "";
 
+function preload()
+{
+  touch = loadSound("ball_touch_paddel.wav");
+  miss = loadSound("missed.wav");
+}
 function setup(){
   var canvas =  createCanvas(700,600);
   canvas.parent("canvas");
@@ -49,9 +54,9 @@ function gotPoses(results)
   if(results.length > 0)
 	{
 		  console.log(results);
-	  	noseX = results[0].pose.rightWrist.x;
-	  	noseY = results[0].pose.rightWrist.y;
-      rightWristScore = results[0].pose.rightWrist.score;
+	  	noseX = results[0].pose.nose.x;
+	  	noseY = results[0].pose.nose.y;
+      noseScore = results[0].pose.keypoints[0].score;
 	}
 }
 
@@ -61,15 +66,17 @@ function startGame()
   document.getElementById("status").innerHTML = "The Game . . . BEGINS!";
 }
 function draw(){
+  background(0); 
+  image(video, 0, 0, 700, 600);
   if(game_status == "start")
   {
-  if(rightWristScore > 0.2)
+  if(noseScore > 0.1)
   {
     fill("crimson");
     stroke("crimson");
-    circle(x, y, 10);
+    circle(noseX, noseY, 10);
   }
- background(0); 
+
 
  fill("black");
  stroke("black");
@@ -86,7 +93,7 @@ function draw(){
    fill(250,0,0);
     stroke(0,0,250);
     strokeWeight(0.5);
-   paddle1Y = mouseY; 
+   paddle1Y = noseY;
    rect(paddle1X,paddle1Y,paddle1,paddle1Height,100);
    
    
@@ -107,6 +114,7 @@ function draw(){
    //function move call which in very important
     move();
   }
+
 }
 
 
@@ -159,12 +167,14 @@ function move(){
    }
   if (ball.x-2.5*ball.r/2< 0){
   if (ball.y >= paddle1Y&& ball.y <= paddle1Y + paddle1Height) {
-    ball.dx = -ball.dx+0.5; 
+    ball.dx = -ball.dx+0.5;
+    touch.play();
   }
   else{
     pcscore++;
     reset();
     navigator.vibrate(100);
+    miss.play();
   }
 }
 if(pcscore ==4){
@@ -175,7 +185,7 @@ if(pcscore ==4){
     stroke("white");
     textSize(25)
     text("Game Over!☹☹",width/2,height/2);
-    text("Reload The Page!",width/2,height/2+30)
+    text("Press the RESTART button to play again!",width/2,height/2+30)
     noLoop();
     pcscore = 0;
 }
@@ -204,4 +214,11 @@ function paddleInCanvas(){
   if(mouseY < 0){
     mouseY =0;
   }  
+}
+
+function restart()
+{
+  pcscore = 0;
+  playerscore = 0;
+  loop();
 }
